@@ -1,4 +1,17 @@
 import asyncio
+import mysql.connector
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+db_config = mysql.connector.connect(
+    host = 'potato-db',
+    dbname = os.getenv('MYSQL_DATABASE'),
+    user = os.getenv('MYSQL_USER'),
+    password = os.getenv('MYSQL_PASSWORD'),
+    port = 3306
+)
 
 async def handle_client(reader, writer):
     address = writer.get_extra_info('peername')

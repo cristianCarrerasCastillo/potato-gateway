@@ -1,0 +1,49 @@
+version: '1'
+services:
+  db:
+    image: mysql:8
+    container_name: plant-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db/:/docker-entrypoint-initdb.d/
+  
+  gateway:
+    build: 
+      context: ./app
+      dockerfile: potato.dockerfile
+    container_name: server_gateway
+    ports:
+      - "9011:9011"
+    depends_on:
+      - db
+    env_file:
+      - ./app/.env
+    
+  django:
+    build:
+      context: ./django
+      dockerfile: django.dockerfile
+    container_name: django_app
+    ports:
+      - "8000:8000"
+    depens_on:
+      - db
+    volumens:
+      - ./django:/app
+    env_file:
+      - ./django/.env
+    comand: >
+      sh -c "/wait-for-it.sh db:3306 -- python manage.py migrate && 
+      python create_superuser.py &&
+      python manage.py runserver 0.0.0.0:8000" 
+      
+
+volumes:
+  mysql_data:
