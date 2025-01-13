@@ -1,0 +1,1 @@
+while ! curl -o - db:3306; do sleep 1; done

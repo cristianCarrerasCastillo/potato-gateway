@@ -8,10 +8,8 @@ WORKDIR /app
 COPY . .
 
 # Instalacion de dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r potato-requirements.txt
 
 # Expone el puerto 9011
 EXPOSE 9011
 
-#Correr la app
-CMD ["python", "potato-server.py"]
